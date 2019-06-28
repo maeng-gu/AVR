@@ -6,6 +6,7 @@ void setup() {
   OCR1A = 11+712; // (7 ~ 256)
   //OCR2A = 36+712; //왼
   TIMSK1 = 0x03; //타이머마스크 인터럽트 -> 인터럽트 활성화
+  pinMode(13, OUTPUT);
 }
 
 unsigned long previousMicors = 0; 
@@ -13,16 +14,16 @@ unsigned long previousMillis = 0;
 int count = 0;
 int flag = 0;
 int duty = 1000;
-int ocrcount = 6;
+int ocrcount = 11;
 
-SIGNAL(TIMER2_COMPA_vect)
+SIGNAL(TIMER1_COMPA_vect)
 {
   digitalWrite(13, 0);
 }
 
-SIGNAL(TIMER2_OVF_vect)
+SIGNAL(TIMER1_OVF_vect)
 {
-  TCNT1 = 6;
+  TCNT1 = 712;
   digitalWrite(13, 1);
 }
 
@@ -89,14 +90,14 @@ SIGNAL(TIMER2_OVF_vect)
 void loop() {
   unsigned long currentMillis = millis();
 
-  if(currentMillis - previousMillis > 10)
+  if(currentMillis - previousMillis > 100)
   {
-    previousMillis - currentMillis;
+    previousMillis = currentMillis;
     ocrcount++;
-    if(ocrcount == 10)
+    if(ocrcount == 36)
     {
-      ocrcount = 6;
+      ocrcount = 11;
     }
-    OCR2A = ocrcount;
+    OCR1A = ocrcount +712;
   }
 }
