@@ -80,14 +80,14 @@ void EXTI9_5_IRQHandler(void)
 {
   if (EXTI->PR & (1<<5)) {                       // EXTI0 interrupt pending?
     if ((ledLight ^=1) == 0) 
-    	GPIOB->ODR &= ~(0x00 << 8);                           // switch on LED
+    	GPIOC->ODR &= ~(0x01 << 8);                           // switch on LED
     else
-    	GPIOB->ODR |=  (0x00 << 8);                           // switch off LED
+    	GPIOC->ODR |=  (0x01 << 8);                           // switch off LED
 
     EXTI->PR = (1<<5);                          // clear pending interrupt
   }
 	
-  else if (EXTI->PR & (1<<5)) {                       // EXTI0 interrupt pending?
+  else if (EXTI->PR & (1<<6)) {                       // EXTI0 interrupt pending?
     if ((ledLight1 ^=1) == 0) 
     	GPIOB->ODR &= ~(0x01 << 7);                           // switch on LED
     else
@@ -141,15 +141,28 @@ int main (void) {
 //	*(volatile unsigned int *)(0xE000E100) |= 0x80; //NVIC -> ISER0
 //////////////////////////////////////////////////////////////////////////
 
-	*(volatile unsigned int *)(0x40021018) |= 0x04; //APB2ENR
-	*(volatile unsigned int *)(0x40010800) |= 0x40; //GPIOA ->CRL
-	*(volatile unsigned int *)(0x40010804) |= 0x03; //GPIOA ->CPH
-	
-	*(volatile unsigned int *)(0x4001040c) |= 0x02;  //EXIT -> FTSR
-	*(volatile unsigned int *)(0x40010400) |= 0x02; //EXIT -> IMR
-	
-	*(volatile unsigned int *)(0xE000E100) |= 0x80; //NVIC -> ISER0
-	
+//	*(volatile unsigned int *)(0x40021018) |= 0x1c; //APB2ENR
+//	*(volatile unsigned int *)(0x40010800) = (0x04 <<20);   //0x00400000; //GPIOA.5 ->CRL //inputmode
+//	*(volatile unsigned int *)(0x40011004) |= 0x03; //GPIOc.8 //00000003->CRH
+//	///////////////////////////
+//	*(volatile unsigned int *)(0x4001040c) |= 0x02;  //EXIT -> FTSR
+//	*(volatile unsigned int *)(0x40010400) |= 0x02; //EXIT -> IMR
+//	
+//	*(volatile unsigned int *)(0xE000E100) |= 0x00800000; //NVIC -> ISER0.23
+//	
+////////////////////////////////////
+
+	*(volatile unsigned int *)(0x40021000) |= 0x14; //APB2ENR
+	*(volatile unsigned int *)(0x40010800) = 0x00400000; //gpioa-5-inputmode
+	*(volatile unsigned int *)(0x40011004) = 0x00000003; //gpioa-8-outputmode
+	*(volatile unsigned int *)(0x4001040c) |= 0x00000020; //EXIT_FTSR
+	*(volatile unsigned int *)(0x40010400) |= 0x00000020; //EXIT _ IMR
+	*(volatile unsigned int *)(0xE00E1000) |= 0x00400000; //NVIC_4,9 
+
+
+
+
+///////////////////////////////////
 // Interrupt Group Priority
 //SCB->AIRCR |=0x05FA0300; 
 // =>  SCB->AIRCR = AIRCR_VECTKEY_MASK | NVIC_PriorityGroup; 
@@ -171,7 +184,8 @@ int main (void) {
 //EXTI->FTSR      |= 0x00;
 
 
-	for(;;) {
+
+for(;;) {
 		
 //		a= GPIOA->IDR;
 //		
