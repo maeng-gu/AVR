@@ -1,0 +1,99 @@
+void setup() {
+  Serial.begin(9600);
+
+  DDRC = 0x30;
+
+  TWBR = 18; //twbr : 18
+  TWSR = 0x01; //twps : 1
+  TWCR = 0x04; // I2C enable
+
+  //start condition
+  TWCR = 0xA4; //start condition, TWI enable
+
+  Serial.println("befor int flag");
+
+  while(!(TWCR & 0x80));
+  Serial.println("after int flag");
+  Serial.println(TWSR, 2);
+
+  if(TWSR & 0x08 == 0x08)
+  {
+    Serial.println("start ok!");
+  }
+  else
+  {
+    Serial.println("start error!");
+  }
+
+  //device address
+  TWDR = 0xA0;
+  TWCR = 0x84;
+  
+  while(!(TWCR & 0x80));
+
+  if(TWSR & 0x18 == 0x18)
+  {
+    Serial.println("Device Address send/ACK OK!");
+  }
+  else if(TWSR & 0x20 == 0x20)
+  {
+    Serial.println("Device Address send/Not Ack !");
+  }
+  else
+  {
+    Serial.println("Device Address state Error!");
+  }
+
+  ////////////////
+  //EEPROM Memory Address state
+  
+  TWDR = 0x50;
+  TWCR = 0x84;
+  
+  while(!(TWCR & 0x80));
+
+  if(TWSR & 0x28 == 0x28)
+  {
+    Serial.println("EEPROM Memory Address send/Ack ok!");
+  }
+  else if(TWSR & 0x30 == 0x30)
+  {
+    Serial.println("EEPROM Memory Address send/Not Ack!");
+  }
+  else
+  {
+    Serial.println("EEPROM Memory Address state Error!");
+  }
+
+  
+  ////////////////
+  //EEPROM Memory data state
+  
+  TWDR = 0x80;
+  TWCR = 0x84;
+  
+  while(!(TWCR & 0x80));
+
+  if(TWSR & 0x28 == 0x28)
+  {
+    Serial.println("EEPROM Memory Data send/Ack ok!");
+  }
+  else if(TWSR & 0x30 == 0x30)
+  {
+    Serial.println("EEPROM Memory Data send/Not Ack!");
+  }
+  else
+  {
+    Serial.println("EEPROM Memory Data state Error!");
+  }
+
+  
+  ////////////////
+  //STOP state
+  TWCR = 0x94;
+}
+
+void loop() {
+
+  
+}
