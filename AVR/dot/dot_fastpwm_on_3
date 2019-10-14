@@ -1,0 +1,91 @@
+void setup() {
+  //pinmode output 
+  for(int i = 2 ; i < 18 ; i++)
+  {
+    pinMode(i, OUTPUT);
+  }
+
+    //column pin low 
+  for(int i = 2 ; i < 10 ; i++)
+  {
+    digitalWrite(i, HIGH);
+  }
+
+    //row pin high
+  for(int i = 10 ; i < 18 ; i++)
+  {
+    digitalWrite(i, LOW);
+  }
+  //-------------------
+  Serial.begin(9600);
+
+  TCCR1A = 0x03;
+  TCCR1B = 0x0B;
+  TCCR1C = 0x00;
+  TCNT1 = 399; //1024 -625
+  OCR1A = 399;//399 부터 시작하므로 0퍼 두티 만들기
+  TIMSK1 = 0x01;
+
+
+}
+
+int i= 0;
+int j = 0;
+int idx;
+char num[10][8] ={
+  {0x00, 0x38, 0x44, 0x4c, 0x54, 0x64, 0x44, 0x38},
+  {0x00, 0x10, 0x30, 0x50, 0x10, 0x10, 0x10, 0x7c},
+  {0x00, 0x38, 0x44, 0x04, 0x08, 0x10, 0x20, 0x7c},
+  {0x00, 0x38, 0x44, 0x04, 0x18, 0x04, 0x44, 0x38},
+  {0x00, 0x08, 0x18, 0x28, 0x48, 0x7c, 0x08, 0x08},
+  {0x00, 0x7c, 0x40, 0x78, 0x04, 0x04, 0x44, 0x38},
+  {0x00, 0x38, 0x40, 0x40, 0x78, 0x44, 0x44, 0x38},
+  {0x00, 0x7c, 0x04, 0x08, 0x10, 0x20, 0x20, 0x20},
+  {0x00, 0x38, 0x44, 0x44, 0x38, 0x44, 0x44, 0x38},
+  {0x00, 0x38, 0x44, 0x44, 0x3c, 0x04, 0x44, 0x38}
+};
+unsigned long cur_mi = 0;
+unsigned long cur_ml = 0;
+
+unsigned long pre_mi = 0;
+unsigned long pre_mi_1 = 0;
+unsigned long pre_ml = 0;
+unsigned long pre_ml_1 = 0;
+unsigned long pre_ml_2 = 0;
+
+
+int k = 0;
+int count = 0;
+int duty = 100;
+int count_pwm = 0;
+int count_pwm_1 = 0;
+
+int pwm_duty = 99;
+int pwm_duty_1 = 99;
+
+int pwm_duty_arr[8];
+
+int count_pwm_arr[8];
+int line_index;
+
+void loop() {
+}
+
+ISR(TIMER1_OVF_vect)
+{
+  TCNT1 = 399;
+  for(int i=10; i<18; i++){
+    digitalWrite(i, LOW);
+  }
+  for(int i =0; i<8; i++){
+    if(num[3][line_index] & (0x80>>i)){
+      digitalWrite(2+i, LOW);
+    }
+    else{
+      digitalWrite(2+i, HIGH);
+    }
+  }
+  digitalWrite(10+line_index, HIGH);
+  line_index++;
+  if(line_index==8)line_index=0;
+}
