@@ -1,0 +1,59 @@
+void setup() {
+  //pinmode output 
+  for(int i = 2 ; i < 18 ; i++)
+  {
+    pinMode(i, OUTPUT);
+  }
+
+    //column pin low 
+  for(int i = 2 ; i < 10 ; i++)
+  {
+    digitalWrite(i, LOW);
+  }
+
+    //row pin high
+  for(int i = 10 ; i < 18 ; i++)
+  {
+    digitalWrite(i, HIGH);
+  }
+  //-------------------
+
+
+}
+
+int i;
+int j;
+int num[8] = {0x00, 0x38, 0x44, 0x04, 0x18, 0x04, 0x44, 0x38};
+
+void loop() {
+
+  for(j = 0 ; j < 8 ; j++)
+  {
+        
+    //1. 8개 row pin off
+    for(i = 10 ; i < 18 ; i++)
+    {
+      digitalWrite(i, LOW);
+    }
+  //---------------
+    //2. colum value
+    for(i = 0 ; i < 8 ; i++)
+    {
+      if(num[j] & (0x80>>i))
+      {
+        digitalWrite(2 + i, LOW);
+      }
+      else
+      {
+        digitalWrite(2+i, HIGH);
+      }
+    }
+  
+  //----------------
+  //3. row pin on
+    digitalWrite(j+10, HIGH);
+    //----------
+    //4. delay(2.5)
+    delayMicroseconds(2500);
+    }
+ }
