@@ -1,0 +1,82 @@
+void setup() {
+  //pinmode output 
+  for(int i = 2 ; i < 18 ; i++)
+  {
+    pinMode(i, OUTPUT);
+  }
+
+    //column pin low 
+  for(int i = 2 ; i < 10 ; i++)
+  {
+    digitalWrite(i, LOW);
+  }
+
+    //row pin high
+  for(int i = 10 ; i < 18 ; i++)
+  {
+    digitalWrite(i, HIGH);
+  }
+  //-------------------
+
+
+}
+
+int i= 0;
+int j = 0;
+int num[8] = {0x00, 0x38, 0x44, 0x04, 0x18, 0x04, 0x44, 0x38};
+char binary[10][8] ={
+  {0x00, 0x38, 0x44, 0x4c, 0x54, 0x64, 0x44, 0x38},
+  {0x00, 0x10, 0x30, 0x50, 0x10, 0x10, 0x10, 0x7c},
+  {0x00, 0x38, 0x44, 0x04, 0x08, 0x10, 0x20, 0x7c},
+  {0x00, 0x38, 0x44, 0x04, 0x18, 0x04, 0x44, 0x38},
+  {0x00, 0x08, 0x18, 0x28, 0x48, 0x7c, 0x08, 0x08},
+  {0x00, 0x7c, 0x40, 0x78, 0x04, 0x04, 0x44, 0x38},
+  {0x00, 0x38, 0x40, 0x40, 0x78, 0x44, 0x44, 0x38},
+  {0x00, 0x7c, 0x04, 0x08, 0x10, 0x20, 0x20, 0x20},
+  {0x00, 0x38, 0x44, 0x44, 0x38, 0x44, 0x44, 0x38},
+  {0x00, 0x38, 0x44, 0x44, 0x3c, 0x04, 0x44, 0x38}
+};
+unsigned long cur_mi = 0;
+unsigned long cur_ml = 0;
+
+unsigned long pre_mi = 0;
+unsigned long pre_ml = 0;
+
+void loop() {
+  cur_mi = micros();
+  cur_ml = millis();
+
+  if(cur_mi - pre_mi > 2500)
+  {
+    pre_mi = cur_mi;
+       
+      //1. 8개 row pin off
+      for(i = 10 ; i < 18 ; i++)
+      {
+        digitalWrite(i, LOW);
+      }
+    //---------------
+      //2. colum value
+      for(i = 0 ; i < 8 ; i++)
+      {
+        if(num[j] & (0x80>>i))
+        {
+          digitalWrite(2 + i, LOW);
+        }
+        else
+        {
+          digitalWrite(2+i, HIGH);
+        }
+      }
+    
+    //----------------
+    //3. row pin on
+      digitalWrite(j+10, HIGH);
+      //---------
+          
+      // row pin 증가
+      j++;
+      if(j == 8) j = 0;
+
+   }
+}
