@@ -1,0 +1,154 @@
+void setup() {
+  //pinmode output 
+  for(int i = 2 ; i < 18 ; i++)
+  {
+    pinMode(i, OUTPUT);
+  }
+
+    //column pin low 
+  for(int i = 2 ; i < 10 ; i++)
+  {
+    digitalWrite(i, HIGH);
+  }
+
+    //row pin high
+  for(int i = 10 ; i < 18 ; i++)
+  {
+    digitalWrite(i, LOW);
+  }
+  //-------------------
+  Serial.begin(9600);
+}
+
+int i= 0;
+int j = 0;
+char num[10][8] ={
+  {0x00, 0x38, 0x44, 0x4c, 0x54, 0x64, 0x44, 0x38},
+  {0x00, 0x10, 0x30, 0x50, 0x10, 0x10, 0x10, 0x7c},
+  {0x00, 0x38, 0x44, 0x04, 0x08, 0x10, 0x20, 0x7c},
+  {0x00, 0x38, 0x44, 0x04, 0x18, 0x04, 0x44, 0x38},
+  {0x00, 0x08, 0x18, 0x28, 0x48, 0x7c, 0x08, 0x08},
+  {0x00, 0x7c, 0x40, 0x78, 0x04, 0x04, 0x44, 0x38},
+  {0x00, 0x38, 0x40, 0x40, 0x78, 0x44, 0x44, 0x38},
+  {0x00, 0x7c, 0x04, 0x08, 0x10, 0x20, 0x20, 0x20},
+  {0x00, 0x38, 0x44, 0x44, 0x38, 0x44, 0x44, 0x38},
+  {0x00, 0x38, 0x44, 0x44, 0x3c, 0x04, 0x44, 0x38}
+};
+unsigned long cur_mi = 0;
+unsigned long cur_ml = 0;
+
+unsigned long pre_mi = 0;
+unsigned long pre_mi_1 = 0;
+unsigned long pre_ml = 0;
+unsigned long pre_ml_1 = 0;
+unsigned long pre_ml_2 = 0;
+
+
+int k = 0;
+int count = 0;
+int duty = 100;
+int count_pwm = 0;
+int count_pwm_1 = 0;
+
+int pwm_duty = 99;
+int pwm_duty_1 = 99;
+
+int serial_input;
+
+
+void loop() {
+  if(Serial.available())
+  {
+    serial_input = Serial.read();
+    if(serial_input == '1')
+    {
+      pwm_duty = 99;
+    }
+    else if(serial_input == '2')
+    {
+      pwm_duty_1 = 99;
+    }
+  }
+  cur_mi = micros();
+  cur_ml = millis();
+
+  digitalWrite(2, LOW);
+  
+  if(cur_mi - pre_mi_1 > 100)
+  {
+    pre_mi_1 = cur_mi;
+
+    count_pwm++;
+    if(count_pwm == 100)
+    {
+      count_pwm = 0;
+      if(pwm_duty != 0)
+      {
+        digitalWrite(10, HIGH); //on
+      }
+    }
+    else if(count_pwm == pwm_duty)
+    {
+      digitalWrite(10, LOW); //off
+    }
+    //------------------
+    
+    count_pwm_1++;
+    if(count_pwm_1 == 100)
+    {
+      count_pwm_1 = 0;
+      if(pwm_duty_1 != 0)
+      {
+        digitalWrite(11, HIGH); //on
+      }
+    }
+    else if(count_pwm_1 == pwm_duty_1)
+    {
+      digitalWrite(11, LOW); //off
+    }
+    //-------------------
+    
+  }
+
+  if(cur_ml - pre_ml_1 > 10)
+  {
+    pre_ml_1 = cur_ml;
+    if(pwm_duty > 0)
+    {
+      pwm_duty --;
+    }
+  }
+
+  
+  if(cur_ml - pre_ml_2 > 20)
+  {
+    pre_ml_2 = cur_ml;
+    
+    if(pwm_duty_1 > 0)
+    {
+      pwm_duty_1--;
+    }
+  }
+
+//  //======================
+//
+//  digitalWrite(10, HIGH);
+//  while(1)
+//  {
+//    for(i = 0 ; i < 10 ; i++)
+//    {
+//      digitalWrite(2, LOW);//on
+//      delayMicroseconds(duty);
+//      digitalWrite(2, HIGH);//off
+//      delayMicroseconds(10000 - duty);
+//    }
+//    duty += 100;
+//    if(duty > 9000)
+//    {
+//      duty = 1000;
+//    }
+//  }
+//    //======================
+
+
+}
