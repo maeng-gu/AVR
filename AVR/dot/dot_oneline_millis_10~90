@@ -1,0 +1,195 @@
+void setup() {
+  //pinmode output 
+  for(int i = 2 ; i < 18 ; i++)
+  {
+    pinMode(i, OUTPUT);
+  }
+
+    //column pin low 
+  for(int i = 2 ; i < 10 ; i++)
+  {
+    digitalWrite(i, HIGH);
+  }
+
+    //row pin high
+  for(int i = 10 ; i < 18 ; i++)
+  {
+    digitalWrite(i, LOW);
+  }
+  //-------------------
+  Serial.begin(9600);
+//----------------------
+//Timer1
+//  TCCR1A = 0x03;
+//  TCCR1B = 0x0B;
+//  TCCR1C = 0x00;
+//  TIMSK1 = 0x03;
+//  TCNT1 = 399; //1024 -625
+//  OCR1A = 399+312;//399 부터 시작하므로 0퍼 두티 만들기
+
+//----------------------
+//Timer2count_timer2
+TCCR2A = 0x00;
+TCCR2B = 0x02;
+TCNT2 = 206;
+TIMSK2 = 0x01;
+digitalWrite(10, 1);
+  
+
+
+}
+
+int i= 0;
+int j = 0;
+int idx;
+
+int count_timer2 = 0;
+int colum_value = 0;
+
+int duty_var[8] = {10, 20,30, 40,50, 60,70,80};
+
+char num[10][8] ={
+  {0x00, 0x38, 0x44, 0x4c, 0x54, 0x64, 0x44, 0x38},
+  {0x00, 0x10, 0x30, 0x50, 0x10, 0x10, 0x10, 0x7c},
+  {0x00, 0x38, 0x44, 0x04, 0x08, 0x10, 0x20, 0x7c},
+  {0x00, 0x38, 0x44, 0x04, 0x18, 0x04, 0x44, 0x38},
+  {0x00, 0x08, 0x18, 0x28, 0x48, 0x7c, 0x08, 0x08},
+  {0x00, 0x7c, 0x40, 0x78, 0x04, 0x04, 0x44, 0x38},
+  {0x00, 0x38, 0x40, 0x40, 0x78, 0x44, 0x44, 0x38},
+  {0x00, 0x7c, 0x04, 0x08, 0x10, 0x20, 0x20, 0x20},
+  {0x00, 0x38, 0x44, 0x44, 0x38, 0x44, 0x44, 0x38},
+  {0x00, 0x38, 0x44, 0x44, 0x3c, 0x04, 0x44, 0x38}
+};
+unsigned long cur_mi = 0;
+unsigned long cur_ml = 0;
+
+unsigned long pre_mi = 0;
+unsigned long pre_mi_1 = 0;
+unsigned long pre_ml = 0;
+unsigned long pre_ml_1 = 0;
+unsigned long pre_ml_2 = 0;
+
+
+int k = 0;
+int count = 0;
+int duty = 0;
+int count_pwm = 0;
+int count_pwm_1 = 0;
+int pwm_duty = 99;
+int pwm_duty_1 = 99;
+
+int pwm_duty_arr[8];
+
+int count_pwm_arr[8];
+int line_index;
+
+void loop() {
+  cur_mi = micros();
+  cur_ml = millis();
+    if(cur_ml - pre_ml > 2500)
+  {
+    pre_mi = cur_mi;
+  }
+}
+
+ISR(TIMER1_OVF_vect)
+{
+  
+  TCNT1 = 399;
+  line_index++;
+
+  if(line_index == 8 ) 
+  {
+    line_index = 0;
+  }
+
+  //------------------
+  
+  for(int i=10; i<18; i++){
+    digitalWrite(i, LOW);
+  }
+
+  // -------------all off=-------------
+  for(int i =0; i<8; i++){
+    if(num[3][line_index] & (0x80>>i)){
+      digitalWrite(2+i, LOW);
+    }
+    else{
+      digitalWrite(2+i, HIGH);
+    }
+  }
+  //-------row pin on 
+  
+  digitalWrite(10+line_index, HIGH);
+
+//---------------------
+//  if(line_index==0)
+//  {
+//    OCR1A = 459;
+//  }
+//  else
+//  {
+//    OCR1A = 1000;
+//  }
+
+  OCR1A = 399 + line_index*50;
+}
+
+ISR(TIMER1_COMPA_vect)
+{
+  //row pin off
+  digitalWrite(10 + line_index, LOW);
+}
+
+//-=========================
+ISR(TIMER2_OVF_vect){
+  
+  TCNT2 = 206;
+  count_timer2++;
+
+  //--------------------------
+    //led0
+  if(count_timer2 == 100){
+    colum_value = 0xff;
+    count_timer2 = 0;
+    for(int i =0; i<8; i++){
+     if(colum_value & (0x80>>i)){
+      digitalWrite(2+i, LOW);
+     }
+     else{
+      digitalWrite(2+i, HIGH);
+     }
+    }
+  }
+
+  //-------------------------
+  for(j = 0 ; j < 8 ; j++)
+  {
+    if(count_timer2 == duty_var[j]){
+      colum_value &= ~0x80;
+       for(int i =0; i<8; i++){
+        if(colum_value & (0x80>>j)){
+          digitalWrite(2+i, LOW);
+        }
+        else{
+          digitalWrite(2+i, HIGH);
+        }
+      }
+    }
+  }
+  ////////////////////////////////////////////////led1
+
+//  if(count_timer2== 30){
+//    colum_value &= ~0x40;
+//     for(int i =0; i<8; i++){
+//      if(colum_value & (0x80>>i)){
+//        digitalWrite(2+i, LOW);
+//      }
+//      else{
+//        digitalWrite(2+i, HIGH);
+//      }
+//    }
+//  }
+
+  //---------------------------------------------
+}
