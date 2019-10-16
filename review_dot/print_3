@@ -1,0 +1,66 @@
+void setup() {
+  //pinmode output 
+  for(int i = 2 ; i < 18 ; i++)
+  {
+    pinMode(i, OUTPUT);
+  }
+
+    //column pin low 
+  for(int i = 2 ; i < 10 ; i++)
+  {
+    digitalWrite(i, HIGH);
+  }
+
+  
+  //-------------------
+  Serial.begin(9600);
+
+
+}
+
+//col - h - off
+//row - l - off
+
+int count = 10;
+int num[8] = {0x00, 0x38, 0x44, 0x04, 0x18, 0x04, 0x44, 0x38};
+
+void loop() {
+  //------ all row off
+  for(int i = 0 ; i < 10 ; i++)
+  {
+    digitalWrite(i+10, LOW);
+  }
+
+//---------- data col
+  for(int i = 0 ; i < 8 ; i++)
+  {
+    if(num[count-10] & (0x80>>i))
+    {
+      digitalWrite(2 + i, LOW);
+    }
+    else
+    {
+      digitalWrite(2 + i, HIGH);
+    }
+  }
+
+//----------- row high
+  digitalWrite(count, HIGH);
+  delay(2);
+
+  
+  //------ all row off
+  for(int i = 0 ; i < 10 ; i++)
+  {
+    digitalWrite(i+10, LOW);
+  }
+
+
+  
+  count++;
+  if(count > 18)
+  {
+    count = 10;
+  }
+  
+}
