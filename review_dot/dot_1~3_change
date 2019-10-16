@@ -1,0 +1,115 @@
+void setup() {
+  //pinmode output 
+  for(int i = 2 ; i < 18 ; i++)
+  {
+    pinMode(i, OUTPUT);
+  }
+
+    //column pin low 
+  for(int i = 2 ; i < 10 ; i++)
+  {
+    digitalWrite(i, HIGH);
+  }
+
+  digitalWrite(10, HIGH);
+
+  
+  //-------------------
+  Serial.begin(9600);
+
+
+}
+
+//col - h - off
+//row - l - off
+
+int count = 0;
+int duty0 = 0;
+int duty1 = 0;
+int duty2 = 0;
+
+unsigned long cur_mi = 0;
+unsigned long pre_mi = 0;
+
+unsigned long cur_ml0 = 0;
+unsigned long pre_ml0 = 0;
+
+unsigned long cur_ml1 = 0;
+unsigned long pre_ml1 = 0;
+
+unsigned long cur_ml2 = 0;
+unsigned long pre_ml2 = 0;
+
+
+void loop() {
+  cur_mi = micros();
+  cur_ml0 = millis();
+  cur_ml1 = millis();
+  cur_ml2 = millis();
+
+  
+  if(cur_mi - pre_mi > 100)
+  {
+    pre_mi = cur_mi;
+    count++;
+    if(count >100)
+    {
+      count = 0;
+      digitalWrite(2, LOW);
+      digitalWrite(3, LOW);
+      digitalWrite(4, LOW);
+
+    }
+  
+    if(count == duty0)
+    {
+      digitalWrite(2, HIGH);
+    }
+
+    if(count == duty1)
+    {
+      digitalWrite(3, HIGH);
+    }
+
+    if(count == duty2)
+    {
+      digitalWrite(4, HIGH);
+    }
+   
+   }
+
+    
+  if(cur_ml0 - pre_ml0 > 10)
+  {
+    pre_ml0 = cur_ml0;
+    duty0 ++;
+
+    if(duty0 == 100)
+    {
+      duty0 = 0;
+    }
+  }
+
+  if(cur_ml1 - pre_ml1 > 20)
+  {
+    pre_ml1 = cur_ml1;
+    duty1 ++;
+
+    if(duty1 == 100)
+    {
+      duty1 = 0;
+    }
+  }
+
+  if(cur_ml2 - pre_ml2 > 50)
+  {
+    pre_ml2 = cur_ml2;
+    duty2 ++;
+
+    if(duty2 == 100)
+    {
+      duty2 = 0;
+    }
+  }
+
+}
