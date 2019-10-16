@@ -1,0 +1,69 @@
+void setup() {
+  //pinmode output 
+  for(int i = 2 ; i < 18 ; i++)
+  {
+    pinMode(i, OUTPUT);
+  }
+
+    //column pin low 
+  for(int i = 2 ; i < 10 ; i++)
+  {
+    digitalWrite(i, HIGH);
+  }
+
+  digitalWrite(10, HIGH);
+
+  
+  //-------------------
+  Serial.begin(9600);
+
+
+}
+
+//col - h - off
+//row - l - off
+
+int count = 0;
+int duty = 0;
+
+unsigned long cur_mi = 0;
+unsigned long pre_mi = 0;
+
+unsigned long cur_ml = 0;
+unsigned long pre_ml = 0;
+
+
+void loop() {
+  cur_mi = micros();
+  cur_ml = millis();
+  
+  if(cur_mi - pre_mi > 100)
+  {
+    pre_mi = cur_mi;
+    count++;
+    if(count >100)
+    {
+      count = 0;
+      digitalWrite(2, LOW);
+    }
+  
+    if(count == duty)
+    {
+      digitalWrite(2, HIGH);
+    }
+
+  }
+
+    
+  if(cur_ml - pre_ml > 10)
+  {
+    pre_ml = cur_ml;
+    duty ++;
+
+    if(duty == 100)
+    {
+      duty = 0;
+    }
+  }
+
+}
