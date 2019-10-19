@@ -1,0 +1,118 @@
+void setup() {
+  //pinmode output 
+  for(int i = 2 ; i < 18 ; i++)
+  {
+    pinMode(i, OUTPUT);
+  }
+
+    //column pin low 
+  for(int i = 2 ; i < 10 ; i++)
+  {
+    digitalWrite(i, HIGH);
+  }
+
+  
+  //-------------------
+  Serial.begin(9600);
+
+
+}
+
+//col - h - off
+//row - l - off
+
+int count = 0;
+int num[8] = {0x00, 0x38, 0x44, 0x04, 0x18, 0x04, 0x44, 0x38};
+
+
+unsigned long cur_mi = 0;
+unsigned long pre_mi = 0;
+
+
+unsigned long cur_ml = 0;
+unsigned long pre_ml = 0;
+
+int count_onoff = 0;
+int cheak_onoff = 0;
+
+void loop() {
+
+  cur_mi = micros();
+  cur_ml = millis();
+
+  if(cur_mi - pre_mi > 2000)
+  {
+    pre_mi = cur_mi;
+  
+    //------ all row off
+    for(int i = 0 ; i < 10 ; i++)
+    {
+      digitalWrite(i+10, LOW);
+    }
+
+  //---------- data col
+
+  //1초마다 첫번째 led on
+  if(count_onoff == 62)
+  {
+    if(count == 0)
+    {
+      if(cheak_onoff == 0)
+      {
+        num[count] = num[count] | 0x80;
+        cheak_onoff = 1;
+      }
+      else
+      {
+        num[count] = !(num[count] | 0x80);
+         cheak_onoff = 0;
+      }
+    }
+    count_onoff = 0;
+  }
+  count_onoff ++;
+
+  //-----------data
+    for(int i = 0 ; i < 8 ; i++)
+    {
+      if(num[count] & (0x80>>i))
+      {
+        digitalWrite(2 + i, LOW);
+      }
+      else
+      {
+        digitalWrite(2 + i, HIGH);
+      }
+    }
+
+////첫번째 led
+//    if(count + 10 == 10)
+//    {
+//      digitalWrite(2, 0);
+//    }
+//    
+    //----------- row high
+      digitalWrite(count + 10, HIGH);
+
+  
+    count++;
+    if(count > 10)
+    {
+      count = 0;
+    }
+    
+  }
+//  
+//  if(cur_ml - pre_ml > 20)
+//  {
+//    pre_ml = cur_ml;
+//    digitalWrite(10, 0);
+//
+//    digitalWrite(2, 0);
+//
+//    digitalWrite(10, 1);
+//    
+//  }
+  
+  
+}
