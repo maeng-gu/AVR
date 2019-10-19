@@ -1,0 +1,85 @@
+void setup() {
+  //pinmode output 
+  for(int i = 2 ; i < 18 ; i++)
+  {
+    pinMode(i, OUTPUT);
+  }
+
+    //column pin low 
+  for(int i = 2 ; i < 10 ; i++)
+  {
+    digitalWrite(i, HIGH);
+  }
+
+  
+  //-------------------
+  Serial.begin(9600);
+
+  TCCR2A = 0x00;
+  TCCR2B = 0x02;
+  TCNT2 = 156;
+  TIMSK2 = 0x01;
+  
+
+
+}
+
+//col - h - off
+//row - l - off
+
+int count = 0;
+int num[8] = {0x00, 0x38, 0x44, 0x04, 0x18, 0x04, 0x44, 0x38};
+
+
+unsigned long cur_mi = 0;
+unsigned long pre_mi = 0;
+
+
+unsigned long cur_ml = 0;
+unsigned long pre_ml = 0;
+
+int count_on = 0;
+
+void loop() {
+}
+
+SIGNAL(TIMER2_OVF_vect)
+{
+  TCNT2 = 156;
+
+  count_on++;
+
+  if(count_on == 50)
+  {
+    count_on = 0;
+    //-----------------------
+    for(int i = 0 ; i < 8 ; i++) 
+    {
+      digitalWrite(i+10, LOW);
+    }      
+    //-----------------------
+  
+    for(int i = 0 ; i < 8 ; i++)
+    {
+      if(num[count] & (0x80>>i))
+      {
+        digitalWrite(2 + i, LOW);
+      }
+      else
+      {
+        digitalWrite(2 + i, HIGH);
+      }
+    }
+    //-----------------------
+  
+    digitalWrite(count + 10, HIGH);
+    //-----------------------
+  
+    count++;
+    if(count == 8)
+    {
+      count = 0;
+    }
+  }
+
+}
