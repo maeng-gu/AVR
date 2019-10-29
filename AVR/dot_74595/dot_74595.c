@@ -178,15 +178,6 @@ int main (void) {
 	
 	GPIOA -> CRL &= ~(0xff << 5*4);	
 	GPIOA -> CRL |= (0x03 << 5*4);	
-	
-	//--------------------------
-	//SPI register setting
-	RCC -> APB2ENR = 0x501C;
-	GPIOC -> CRL = 0xB4BB333;
-	GPIOC -> CRL = 0xB4BB0B04;
-	
-	SPI1 -> CR1 = 0x037C;
-	SPI1 -> CR2 = 0x00;
 
 //	
 //	RCC -> APB2ENR |= 0x08; //PORTB clock enable
@@ -207,51 +198,51 @@ int main (void) {
 	//systick enable
 //	SysTick -> LOAD = 720;//load값, 10 us interrupt
 //	SysTick -> CTRL = 0x07;
-//	
-//	while(1)
-//	{
-//	//---------------------------------------------
-//	//SPI register setting
-//	TIM2 -> CR1 = 0x01;
-//	TIM2->DIER = 0x01;
-//	TIM2 -> PSC = 7200;
-//	TIM2 -> ARR = 10000;
-//	
-//	NVIC -> ISER[0] |= (0x01 << 28); //timer 2 update interrupt set
+	
+	while(1)
+	{
+	//---------------------------------------------
+	//SPI register setting
+	TIM2 -> CR1 = 0x01;
+	TIM2->DIER = 0x01;
+	TIM2 -> PSC = 7200;
+	TIM2 -> ARR = 10000;
+	
+	NVIC -> ISER[0] |= (0x01 << 28); //timer 2 update interrupt set
 
-//GPIOC -> CRL = 0xB4BB3333;
-//GPIOA -> CRL = 0xB0BB0B04;
-//RCC ->APB2ENR  = 0x501C;
+GPIOC -> CRL = 0xB4BB3333;
+GPIOA -> CRL = 0xB0BB0B04;
+RCC ->APB2ENR  = 0x501C;
 
-//SPI1 -> CR1 = 0x0B6C;
-//SPI1 -> CR2 = 0x00;
+SPI1 -> CR1 = 0x0B6C;
+SPI1 -> CR2 = 0x00;
 
-//SPI1 -> DR = 0xaaaa;
+SPI1 -> DR = 0xaaaa;
 
-////-------74595 latch enable-----------
+//-------74595 latch enable-----------
 
-//GPIOC -> ODR = 0xff;
-//delay_for();
-//GPIOC -> ODR = 0x00;
+GPIOC -> ODR = 0xff;
+delay_for();
+GPIOC -> ODR = 0x00;
 
-//for(ii = 0 ; ii < 300000 ; ii++)
-//{
-//	delay_for();
-//}
+for(ii = 0 ; ii < 300000 ; ii++)
+{
+	delay_for();
+}
 
-//SPI1 -> DR = 0x5555;
+SPI1 -> DR = 0x5555;
 
-////-------74595 latch enable-----------
+//-------74595 latch enable-----------
 
-//GPIOC -> ODR = 0xff;
-//delay_for();
-//GPIOC -> ODR = 0x00;
+GPIOC -> ODR = 0xff;
+delay_for();
+GPIOC -> ODR = 0x00;
 
-//for(ii = 0 ; ii < 300000 ; ii++)
-//{
-//	delay_for();
-//}
-//}
+for(ii = 0 ; ii < 300000 ; ii++)
+{
+	delay_for();
+}
+}
 
 for(;;) {
 		
