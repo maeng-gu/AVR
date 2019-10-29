@@ -93,23 +93,7 @@ void TIM2_IRQHandler (void) {
 
 	
 	
-  if ((TIM2->SR & 0x0001) != 0) {                 // check interrupt source
-
-//					count_pwm++;
-//			
-//			if(count_pwm == 100){
-//				count_pwm = 0;
-//				GPIOA->ODR = 0x20;
-//			}
-//			else if(count_pwm == pwm_duty){
-//				GPIOA->ODR &= ~0x20;
-//			}
-//		
-//	ledLight2 = ~ledLight2;
-//	if( ledLight2 )
-//    	GPIOA->ODR &= ~(0x01 << 5);                           // switch on LED
-//	else
-//    	GPIOA->ODR |=   (0x01 << 5);                          // switch off LED
+  if ((TIM2->SR & 0x0001) != 0) {               
 
     TIM2->SR &= ~(1<<0);                          // clear UIF flag
 // }
@@ -130,35 +114,7 @@ void SysTick_Handler(void)
  {
 
 	 count++;
-//		TimingDelay_Decrement();
-// if(ledLight1 != ledLight1)
-//	 
-//	 //GPIOA 1밀리마다 토굴
-//	 
-//	 	ledLight1 = ~ledLight1;
-//	if( ledLight1 )
-//    	GPIOA->ODR &= ~0x20;                           // switch on LED
-//	else
-//    	GPIOA->ODR |=  0x20; 				
-//	 
-//	 #if 0
-//	ledLight1 = ~ledLight1;
-//	if( ledLight1 )
-//    	GPIOB->ODR &= ~LED1;                           // switch on LED
-//	else
-//    	GPIOB->ODR |=  LED1; 				
-//		
-//	if(count++ == 1000){
-//		count=0;
-//		ledLight3 = ~ledLight3;
-//		if( ledLight3 )
-//	    	GPIOB->ODR &= ~(0x01 << 4);                           // switch on LED
-//		else
-//	    	GPIOB->ODR |=  (0x01 << 4); 
-//	}
-//			#endif
-//		                          // switch off LED
- }
+
 
 /*----------------------------------------------------------*\
  | MIAN ENTRY                                               |
@@ -179,26 +135,6 @@ int main (void) {
 	GPIOA -> CRL &= ~(0xff << 5*4);	
 	GPIOA -> CRL |= (0x03 << 5*4);	
 
-//	
-//	RCC -> APB2ENR |= 0x08; //PORTB clock enable
-//	RCC-> APB2ENR |= 0x10; //PORtC clock enable
-//	
-//	GPIOB -> CRH = 0x33333333;	//colum : PB7 ~ PB15
-//	GPIOC -> CRL = 0x33333333;	//ROW : PC0~PC7
-	
-//	GPIOC -> ODR = 0x00;
-//	GPIOB -> ODR = 0xff00; 
-	
-	
-//	GPIOA -> CRL = ~(0x0f << 20);
-//	GPIOA -> CRL |= (0x03<<20);
-//	
-//	GPIOB -> ODR |= 0x20;
-
-	//systick enable
-//	SysTick -> LOAD = 720;//load값, 10 us interrupt
-//	SysTick -> CTRL = 0x07;
-	
 	while(1)
 	{
 	//---------------------------------------------
@@ -246,42 +182,6 @@ for(ii = 0 ; ii < 300000 ; ii++)
 
 for(;;) {
 		
-//		c_micros = micros_10us();
-//		if(c_micros - p_micros>10){
-//			p_micros = c_micros;
-//			//[1] all row off
-//			GPIOB->ODR = 0x00;	//all row off
-//			//[2]one colum value
-//			for(i=0; i<8; i++){
-//				if(!(num[row_num] & (0x80 >> i))){
-//					reg_data |= 0x01 << i;
-//				}
-//			}
-//			GPIOC -> ODR =  0x23;
-//			//[3] one row off
-//			GPIOB -> ODR = 0xff00 << row_num;
-//			
-//			//-----------------
-//			//ROW NUMBER CHANGE
-//			row_num++;
-//			if(row_num == 100)
-//			{
-//				row_num=0;
-//			}
-			
-//		}
-		
-                      
-		
-//		c_micros = micros_10us();
-//		if(c_micros - p_micros>1000){
-//			p_micros = c_micros;
-//			
-//			pwm_duty++;
-//			
-//			if(pwm_duty == 100){
-//				pwm_duty = 1;
-//			}
-//		}
+}
 }
 }
