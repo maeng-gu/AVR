@@ -1,0 +1,35 @@
+int joy_valueX;
+int joy_valueY;
+
+void setup() {
+  Serial.begin(9600)
+  DDRC = 0x00; //A0 pin INPUT
+  ADMUX = 0x40;
+  ADCSRA = 0x87;
+}
+
+void loop() {
+  //channel 0
+  ADMUX = 0x40;
+  ADCSRA |= 40;
+  while(!(ADCSRA & 0x10));
+  ADCSRA |= 0x10;
+  joy_valueX = ADC;
+  //---------------
+  //channel 1
+  ADMUX = 0x41;
+  ADCSRA |=  0x40;
+  while(!(ADCSRA & 0x10));
+  ADCSRA|= 0x10;
+  joy_valueY = ADC;
+
+  //---------------
+  Serial.print("X : ");
+  Serial.println(joy_valueX);
+  Serial.print("Y : ");
+  Serial.println(joy_valueY);
+  
+ 
+  Serial.println(ADC);
+  delay(100);
+}
